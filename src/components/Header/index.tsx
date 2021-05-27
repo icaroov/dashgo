@@ -1,5 +1,9 @@
-import { Flex, Text, Input, Icon } from '@chakra-ui/react'
-import { RiSearchLine as SearchIcon } from 'react-icons/ri'
+import { Flex, Text, Input, Icon, HStack, Box, Avatar } from '@chakra-ui/react'
+import {
+  RiNotificationLine as NotificationIcon,
+  RiSearchLine as SearchIcon,
+  RiUserAddLine as UserIcon,
+} from 'react-icons/ri'
 
 export default function Header() {
   return (
@@ -42,6 +46,32 @@ export default function Header() {
           mr='4'
         />
         <Icon as={SearchIcon} fontSize='20' />
+      </Flex>
+
+      <Flex align='center' ml='auto'>
+        <HStack
+          spacing='8'
+          mx='8'
+          pr='8'
+          py='1'
+          color='gray.300'
+          borderRightWidth={1}
+          borderColor='gray.700'
+        >
+          <Icon as={NotificationIcon} fontSize='20' />
+          <Icon as={UserIcon} fontSize='20' />
+        </HStack>
+
+        <Flex align='center'>
+          <Box mr='4' textAlign='right'>
+            <Text>Icaro Oliveira</Text>
+            <Text color='gray.300' fontSize='small'>
+              icarovinici@gmail.com
+            </Text>
+          </Box>
+
+          <Avatar size='md' name='Icaro Oliveira' />
+        </Flex>
       </Flex>
     </Flex>
   )
