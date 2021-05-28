@@ -46,8 +46,8 @@ export default function Table() {
               as='a'
               size='sm'
               fontSize='sm'
-              colorScheme='gray'
-              color='gray.500'
+              colorScheme='blue'
+              color='gray.50'
               leftIcon={<Icon as={RiPencilLine} fontSize='20' />}
             >
               Editar

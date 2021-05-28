@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { Box, Button, Flex, Heading, Icon } from '@chakra-ui/react'
 import { RiAddLine } from 'react-icons/ri'
 
-import { Table } from '../../components'
+import { Pagination, Table } from '../../components'
 
 export default function UserList() {
   return (
@@ -29,6 +29,7 @@ export default function UserList() {
         </Flex>
 
         <Table />
+        <Pagination />
       </Box>
     </>
   )
