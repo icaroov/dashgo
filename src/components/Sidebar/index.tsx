@@ -1,10 +1,11 @@
-import { Box, Icon, Link, Stack, Text } from '@chakra-ui/react'
+import { Box, Icon, Link as ChakraLink, Stack, Text } from '@chakra-ui/react'
 import {
   RiContactsLine,
   RiDashboardLine,
   RiGitMergeLine,
   RiInputMethodLine,
 } from 'react-icons/ri'
+import Link from 'next/link'
 
 export default function Sidebar() {
   return (
@@ -15,18 +16,22 @@ export default function Sidebar() {
             GERAL
           </Text>
           <Stack spacing='4' mt='8' align='stretch'>
-            <Link display='flex' alignItems='center'>
-              <Icon as={RiDashboardLine} fontSize='20' />
-              <Text fontWeight='medium' ml='4'>
-                Dashboard
-              </Text>
+            <Link href='/dashboard'>
+              <ChakraLink display='flex' alignItems='center'>
+                <Icon as={RiDashboardLine} fontSize='20' />
+                <Text fontWeight='medium' ml='4'>
+                  Dashboard
+                </Text>
+              </ChakraLink>
             </Link>
 
-            <Link display='flex' alignItems='center'>
-              <Icon as={RiContactsLine} fontSize='20' />
-              <Text fontWeight='medium' ml='4'>
-                Usuários
-              </Text>
+            <Link href='/users'>
+              <ChakraLink display='flex' alignItems='center'>
+                <Icon as={RiContactsLine} fontSize='20' />
+                <Text fontWeight='medium' ml='4'>
+                  Usuários
+                </Text>
+              </ChakraLink>
             </Link>
           </Stack>
         </Box>
@@ -36,19 +41,19 @@ export default function Sidebar() {
             AUTOMAÇÃO
           </Text>
           <Stack spacing='4' mt='8' align='stretch'>
-            <Link display='flex' alignItems='center'>
+            <ChakraLink display='flex' alignItems='center'>
               <Icon as={RiInputMethodLine} fontSize='20' />
               <Text fontWeight='medium' ml='4'>
                 Formulários
               </Text>
-            </Link>
+            </ChakraLink>
 
-            <Link display='flex' alignItems='center'>
+            <ChakraLink display='flex' alignItems='center'>
               <Icon as={RiGitMergeLine} fontSize='20' />
               <Text fontWeight='medium' ml='4'>
                 Automação
               </Text>
-            </Link>
+            </ChakraLink>
           </Stack>
         </Box>
       </Stack>
