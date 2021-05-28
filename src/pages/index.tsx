@@ -1,9 +1,15 @@
+import Head from 'next/head'
 import { Flex, Button, Stack } from '@chakra-ui/react'
+
 import { Input } from '../components'
 
 export default function SignIn() {
   return (
     <Flex w='100vw' h='100vh' align='center' justify='center'>
+      <Head>
+        <title>Login | dashgo.</title>
+      </Head>
+
       <Flex
         as='form'
         w='100%'
