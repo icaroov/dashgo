@@ -1,6 +1,7 @@
 import { Box, SimpleGrid, Text } from '@chakra-ui/react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 import { options, series } from '../lib/apexCharts'
