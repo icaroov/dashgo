@@ -1,4 +1,6 @@
-import { Flex, useBreakpointValue } from '@chakra-ui/react'
+import { Flex, useBreakpointValue, IconButton, Icon } from '@chakra-ui/react'
+import { RiMenuLine } from 'react-icons/ri'
+import { useSidebarDrawer } from '../../hooks/SidebarDrawer'
 
 import Logo from './Logo'
 import NotificationsNav from './NotificationsNav'
@@ -11,6 +13,8 @@ export default function Header() {
     lg: true,
   })
 
+  const { onOpen } = useSidebarDrawer()
+
   return (
     <Flex
       as='header'
@@ -22,6 +26,17 @@ export default function Header() {
       px='6'
       align='center'
     >
+      {!isWideScreen && (
+        <IconButton
+          aria-label='open navigation menu'
+          icon={<Icon as={RiMenuLine} />}
+          fontSize='24'
+          variant='unstyled'
+          onClick={onOpen}
+          mr='2'
+        />
+      )}
+
       <Logo />
 
       {isWideScreen && <SearchBox />}
