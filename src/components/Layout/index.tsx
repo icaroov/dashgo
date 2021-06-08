@@ -27,7 +27,7 @@ export default function Layout({ children }: LayoutProps) {
         </Flex>
       )}
 
-      {children}
+      {isLoginPage && <>{children}</>}
     </>
   )
 }
