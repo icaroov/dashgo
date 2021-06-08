@@ -16,3 +16,5 @@ export { default as Table } from './Table'
 
 export { default as Pagination } from './Pagination'
 export { default as PaginationItem } from './Pagination/PaginationItem'
+
+export { default as ActiveLink } from './ActiveLink'
