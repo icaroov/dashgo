@@ -3,13 +3,16 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 import { theme } from '../styles/theme'
 import { Layout } from '../components'
+import { SidebarDrawerProvider } from '../hooks/SidebarDrawer'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <SidebarDrawerProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </SidebarDrawerProvider>
     </ChakraProvider>
   )
 }
