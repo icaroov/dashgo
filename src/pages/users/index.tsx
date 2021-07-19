@@ -1,11 +1,19 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { Box, Button, Flex, Heading, Icon } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, Icon, Spinner } from '@chakra-ui/react'
 import { RiAddLine } from 'react-icons/ri'
+import { useQuery } from 'react-query'
 
 import { Pagination, Table } from '../../components'
 
 export default function UserList() {
+  const { data, isLoading, error } = useQuery('users', async () => {
+    const res = await fetch('http://localhost:3000/api/users')
+    const data = await res.json()
+
+    return data
+  })
+
   return (
     <>
       <Head>
@@ -32,8 +40,18 @@ export default function UserList() {
           </Link>
         </Flex>
 
-        <Table />
-        <Pagination />
+        {isLoading ? (
+          <Flex justifyContent='center'>
+            <Spinner />
+          </Flex>
+        ) : error ? (
+          <Flex justifyContent='center'>Falha ao carregador dados...</Flex>
+        ) : (
+          <>
+            <Table />
+            <Pagination />
+          </>
+        )}
       </Box>
     </>
   )
