@@ -14,7 +14,13 @@ import {
 } from '@chakra-ui/react'
 import { RiPencilLine } from 'react-icons/ri'
 
-export default function Table() {
+import { User } from '../../lib/mirage'
+
+interface TableProps {
+  users: User[]
+}
+
+export default function Table({ users }: TableProps) {
   const isWideScreen = useBreakpointValue({
     base: false,
     lg: true,
@@ -34,34 +40,36 @@ export default function Table() {
       </Thead>
 
       <Tbody>
-        <Tr>
-          <Td>
-            <Checkbox colorScheme='pink' />
-          </Td>
-          <Td>
-            <Box>
-              <Text fontWeight='bold'>Icaro Oliveira</Text>
-              <Text fontWeight='bold' color='gray.300'>
-                icarovinici@gmail.com
-              </Text>
-            </Box>
-          </Td>
-          {isWideScreen && <Td>28 de Maio, 2021</Td>}
-          <Td>
-            {isWideScreen && (
-              <Button
-                as='a'
-                size='sm'
-                fontSize='sm'
-                colorScheme='blue'
-                color='gray.50'
-                leftIcon={<Icon as={RiPencilLine} fontSize='20' />}
-              >
-                Editar
-              </Button>
-            )}
-          </Td>
-        </Tr>
+        {users.map(({ id, name, email, created_at }) => (
+          <Tr key={id}>
+            <Td>
+              <Checkbox colorScheme='pink' />
+            </Td>
+            <Td>
+              <Box>
+                <Text fontWeight='bold'>{name}</Text>
+                <Text fontWeight='bold' color='gray.300'>
+                  {email}
+                </Text>
+              </Box>
+            </Td>
+            {isWideScreen && <Td>{created_at}</Td>}
+            <Td>
+              {isWideScreen && (
+                <Button
+                  as='a'
+                  size='sm'
+                  fontSize='sm'
+                  colorScheme='blue'
+                  color='gray.50'
+                  leftIcon={<Icon as={RiPencilLine} fontSize='20' />}
+                >
+                  Editar
+                </Button>
+              )}
+            </Td>
+          </Tr>
+        ))}
       </Tbody>
     </ChakraTable>
   )

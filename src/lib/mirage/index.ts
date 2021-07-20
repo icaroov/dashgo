@@ -1,7 +1,8 @@
 import { createServer, Factory, Model } from 'miragejs'
 import faker from 'faker'
 
-interface User {
+export interface User {
+  id: string
   name: string
   email: string
   created_at: string
@@ -28,8 +29,7 @@ export function makeServer() {
     },
 
     seeds(server) {
-      server.createList('user', 200)
-      console.log('Criando usuários de testes...')
+      server.createList('user', 10)
     },
 
     routes() {
