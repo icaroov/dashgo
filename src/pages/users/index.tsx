@@ -8,23 +8,29 @@ import { Pagination, Table } from '../../components'
 import { User } from '../../lib/mirage'
 
 export default function UserList() {
-  const { data, isLoading, error } = useQuery('users', async () => {
-    const res = await fetch('http://localhost:3000/api/users')
-    const data = await res.json()
+  const { data, isLoading, error } = useQuery(
+    'users',
+    async () => {
+      const res = await fetch('http://localhost:3000/api/users')
+      const data = await res.json()
 
-    const formattedUsers = data.users.map((user: User) => {
-      return {
-        ...user,
-        created_at: new Date(user.created_at).toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-        }),
-      }
-    })
+      const formattedUsers = data.users.map((user: User) => {
+        return {
+          ...user,
+          created_at: new Date(user.created_at).toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          }),
+        }
+      })
 
-    return formattedUsers
-  })
+      return formattedUsers
+    },
+    {
+      staleTime: 1000 * 5, // 5 seconds
+    }
+  )
 
   return (
     <>
