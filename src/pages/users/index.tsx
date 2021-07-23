@@ -47,7 +47,11 @@ export default function UserList() {
         ) : (
           <>
             <Table users={data} />
-            <Pagination />
+            <Pagination
+              totalCountOfRegisters={200}
+              currentPage={2}
+              onPageChange={() => {}}
+            />
           </>
         )}
       </Box>
