@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { Box, Button, Flex, Heading, Icon, Spinner } from '@chakra-ui/react'
@@ -7,7 +8,8 @@ import { Pagination, Table } from '../../components'
 import { useUsers } from '../../services/hooks/useUsers'
 
 export default function UserList() {
-  const { data, isLoading, isFetching, error } = useUsers()
+  const [currentPage, setCurrentPage] = useState(1)
+  const { data, isLoading, isFetching, error } = useUsers(currentPage)
 
   return (
     <>
@@ -46,11 +48,11 @@ export default function UserList() {
           <Flex justifyContent='center'>Falha ao carregador dados...</Flex>
         ) : (
           <>
-            <Table users={data} />
+            <Table users={data.users} />
             <Pagination
-              totalCountOfRegisters={200}
-              currentPage={2}
-              onPageChange={() => {}}
+              totalCountOfRegisters={data.totalCount}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
             />
           </>
         )}

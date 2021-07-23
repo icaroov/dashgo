@@ -13,8 +13,14 @@ interface GetUsersResponse {
   users: User[]
 }
 
-export const getUsers = async () => {
-  const { data } = await api.get<GetUsersResponse>('/users')
+export const getUsers = async (currentPage: number) => {
+  const { data, headers } = await api.get<GetUsersResponse>('/users', {
+    params: {
+      page: currentPage,
+    },
+  })
+
+  const totalCount = Number(headers['x-total-count'])
 
   const formattedUsers: User[] = data.users.map((user: User) => {
     return {
@@ -27,11 +33,14 @@ export const getUsers = async () => {
     }
   })
 
-  return formattedUsers
+  return {
+    users: formattedUsers,
+    totalCount,
+  }
 }
 
-export const useUsers = () => {
-  return useQuery('users', getUsers, {
+export const useUsers = (currentPage: number) => {
+  return useQuery(['users', currentPage], () => getUsers(currentPage), {
     staleTime: 1000 * 5, // 5 seconds
   })
 }
