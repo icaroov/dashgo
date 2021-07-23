@@ -45,7 +45,7 @@ export default function Pagination({
       align='center'
     >
       <Box>
-        <strong>0</strong> - <strong>10</strong> de <strong>100</strong>
+        <strong>{currentPage}</strong> de <strong>{lastPage}</strong>
       </Box>
       <Stack spacing='2' direction='row'>
         {currentPage > 1 + siblingsCount && (
