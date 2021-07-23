@@ -4,6 +4,7 @@ import {
   Checkbox,
   Icon,
   Table as ChakraTable,
+  Link as ChakraLink,
   Tbody,
   Th,
   Thead,
@@ -15,6 +16,8 @@ import {
 import { RiPencilLine } from 'react-icons/ri'
 
 import { User } from '../../lib/mirage'
+import { api } from '../../services/api'
+import { queryClient } from '../../services/queryClient'
 
 interface TableProps {
   users: User[]
@@ -25,6 +28,18 @@ export default function Table({ users }: TableProps) {
     base: false,
     lg: true,
   })
+
+  const handlePrefetchUser = async (userId: number) => {
+    await queryClient.prefetchQuery(
+      ['user', userId],
+      async () => {
+        const { data } = await api.get(`/users/${userId}`)
+
+        return data
+      },
+      { staleTime: 1000 * 60 * 10 } // 10 minutes
+    )
+  }
 
   return (
     <ChakraTable colorScheme='whiteAlpha'>
@@ -47,7 +62,12 @@ export default function Table({ users }: TableProps) {
             </Td>
             <Td>
               <Box>
-                <Text fontWeight='bold'>{name}</Text>
+                <ChakraLink
+                  color='purple.400'
+                  onMouseEnter={() => handlePrefetchUser(id)}
+                >
+                  <Text fontWeight='bold'>{name}</Text>
+                </ChakraLink>
                 <Text fontWeight='bold' color='gray.300'>
                   {email}
                 </Text>
