@@ -2,15 +2,19 @@ import { useQuery } from 'react-query'
 
 import { api } from '../api'
 
-interface User {
+type User = {
   id: string
   name: string
   email: string
   created_at: string
 }
 
+interface GetUsersResponse {
+  users: User[]
+}
+
 export const getUsers = async () => {
-  const { data } = await api('/users')
+  const { data } = await api.get<GetUsersResponse>('/users')
 
   const formattedUsers: User[] = data.users.map((user: User) => {
     return {
