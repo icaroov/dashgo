@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { Box, Button, Flex, Heading, Icon, Spinner } from '@chakra-ui/react'
 import { RiAddLine } from 'react-icons/ri'
 
 import { Pagination, Table } from '../../components'
-import { useUsers } from '../../services/hooks/useUsers'
+import { getUsers, useUsers } from '../../services/hooks/useUsers'
 
 export default function UserList() {
   const [currentPage, setCurrentPage] = useState(1)
