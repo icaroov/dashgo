@@ -1,12 +1,14 @@
-import Head from 'next/head'
-import { Flex, Button, Stack } from '@chakra-ui/react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import * as yup from 'yup'
+import { Button, Flex, Stack } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
-
-import { useAuth } from '../hooks/useAuth'
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
+import { parseCookies } from 'nookies'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
 import { Input } from '../components'
+import { useAuth } from '../hooks/useAuth'
+import { CookieKeys } from '../services/api'
 
 interface InputValuesData {
   email: string
@@ -75,4 +77,19 @@ export default function SignIn() {
       </Flex>
     </Flex>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const cookies = parseCookies(context)
+
+  if (cookies[CookieKeys.token]) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      },
+    }
+  }
+
+  return { props: {} }
 }
