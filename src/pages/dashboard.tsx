@@ -1,12 +1,13 @@
-import { useEffect } from 'react'
 import { Box, SimpleGrid, Text } from '@chakra-ui/react'
-import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
+import { useEffect } from 'react'
+
+import { options, series } from '../lib/apexCharts'
+import { api, setupAPIClient } from '../services/api'
+import { withSSRAuth } from '../utils/withSSRAuth'
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
-
-import { api } from '../services/api'
-import { options, series } from '../lib/apexCharts'
 
 export default function Dashboard() {
   useEffect(() => {
@@ -40,3 +41,12 @@ export default function Dashboard() {
     </>
   )
 }
+
+export const getServerSideProps = withSSRAuth(async (context) => {
+  const apiClient = setupAPIClient(context)
+  const { data } = await apiClient.get('/me')
+
+  console.log(data)
+
+  return { props: {} }
+})

@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios'
 import { parseCookies, setCookie } from 'nookies'
 
 import { signOut } from '../contexts/authContext'
+import { AuthTokenError } from '../utils/errors/AuthTokenError'
 
 export enum CookieKeys {
   token = '@dashgo.token',
@@ -18,83 +19,93 @@ type FailedRequestProps = {
   onFailure: (error: AxiosError) => void
 }
 
-let cookies = parseCookies()
 let isRefreshing = false
 let failedRequestsQueue = []
 
-export const api = axios.create({
-  // baseURL: 'http://localhost:3000/api',
-  baseURL: 'http://localhost:3333',
-  headers: {
-    Authorization: `Bearer ${cookies[CookieKeys.token]}`,
-  },
-})
+function setupAPIClient(context = undefined) {
+  let cookies = parseCookies(context)
 
-api.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => {
-    const isUnauthorized = error.response?.status === 401
-    const isTokenExpired = error.response.data?.code === 'token.expired'
+  const api = axios.create({
+    // baseURL: 'http://localhost:3000/api',
+    baseURL: 'http://localhost:3333',
+    headers: {
+      Authorization: `Bearer ${cookies[CookieKeys.token]}`,
+    },
+  })
 
-    if (isUnauthorized && isTokenExpired) {
-      cookies = parseCookies()
+  api.interceptors.response.use(
+    (response) => response,
+    (error: AxiosError) => {
+      const isUnauthorized = error.response?.status === 401
+      const isTokenExpired = error.response.data?.code === 'token.expired'
 
-      const oldRefreshToken = cookies[CookieKeys.refreshToken]
-      const originalConfig = error.config
+      if (isUnauthorized && isTokenExpired) {
+        cookies = parseCookies(context)
 
-      if (!isRefreshing) {
-        isRefreshing = true
-        updateToken(oldRefreshToken)
-      }
+        const oldRefreshToken = cookies[CookieKeys.refreshToken]
+        const originalConfig = error.config
 
-      return new Promise((resolve, reject) => {
-        failedRequestsQueue.push({
-          onSuccess: (newToken: string) => {
-            originalConfig.headers['Authorization'] = `Bearer ${newToken}`
+        if (!isRefreshing) {
+          isRefreshing = true
 
-            resolve(api(originalConfig))
-          },
-          onFailure: (err: AxiosError) => {
-            reject(err)
-          },
+          api
+            .post<RefreshResponse>('/refresh', {
+              refreshToken: oldRefreshToken,
+            })
+            .then((response) => {
+              const { token, refreshToken } = response.data
+
+              const config = {
+                maxAge: 30 * 24 * 60 * 60, // 30 days
+                path: '/',
+              }
+
+              setCookie(context, CookieKeys.token, token, config)
+              setCookie(context, CookieKeys.refreshToken, refreshToken, config)
+
+              api.defaults.headers['Authorization'] = `Bearer ${token}`
+
+              redoFailedCalls(token)
+            })
+            .catch((error) => {
+              onErrorRequests(error)
+
+              if (process.browser) {
+                signOut()
+              }
+            })
+            .finally(() => {
+              isRefreshing = false
+            })
+        }
+
+        return new Promise((resolve, reject) => {
+          failedRequestsQueue.push({
+            onSuccess: (newToken: string) => {
+              originalConfig.headers['Authorization'] = `Bearer ${newToken}`
+
+              resolve(api(originalConfig))
+            },
+            onFailure: (err: AxiosError) => {
+              reject(err)
+            },
+          })
         })
-      })
-    } else {
-      if (process.browser) {
-        signOut()
+      } else {
+        if (process.browser) {
+          signOut()
+        } else {
+          return Promise.reject(
+            new AuthTokenError('Error with authentication token.')
+          )
+        }
       }
+
+      return Promise.reject(error)
     }
+  )
 
-    return Promise.reject(error)
-  }
-)
-
-function updateToken(oldRefreshToken: string) {
-  api
-    .post<RefreshResponse>('/refresh', { refreshToken: oldRefreshToken })
-    .then((response) => {
-      const { token, refreshToken } = response.data
-
-      configCookies(token, refreshToken)
-
-      api.defaults.headers['Authorization'] = `Bearer ${token}`
-
-      redoFailedCalls(token)
-    })
-    .catch((error) => onErrorRequests(error))
-    .finally(() => {
-      isRefreshing = false
-    })
-}
-
-function configCookies(token: string, refreshToken: string) {
-  const config = {
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    path: '/',
-  }
-
-  setCookie(undefined, CookieKeys.token, token, config)
-  setCookie(undefined, CookieKeys.refreshToken, refreshToken, config)
+  return api
 }
 
 function redoFailedCalls(token?: string) {
@@ -112,3 +123,7 @@ function onErrorRequests(error: any) {
 
   failedRequestsQueue = []
 }
+
+const api = setupAPIClient()
+
+export { setupAPIClient, api }
