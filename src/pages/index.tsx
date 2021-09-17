@@ -9,6 +9,7 @@ import * as yup from 'yup'
 import { Input } from '../components'
 import { useAuth } from '../hooks/useAuth'
 import { CookieKeys } from '../services/api'
+import { withSSRGuest } from '../utils/withSSRGuest'
 
 interface InputValuesData {
   email: string
@@ -79,17 +80,6 @@ export default function SignIn() {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cookies = parseCookies(context)
-
-  if (cookies[CookieKeys.token]) {
-    return {
-      redirect: {
-        destination: '/dashboard',
-        permanent: false,
-      },
-    }
-  }
-
+export const getServerSideProps = withSSRGuest(async (context) => {
   return { props: {} }
-}
+})
