@@ -29,6 +29,7 @@ type SignInCredentails = {
 
 type AuthContextData = {
   signIn: (credentials: SignInCredentails) => Promise<void>
+  signOut: () => void
   user: User | null
   isAuthenticated: boolean
 }
@@ -39,9 +40,16 @@ type AuthProviderProps = {
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API
+ */
+let authChannel: BroadcastChannel
+
 export function signOut() {
   destroyCookie(undefined, CookieKeys.token)
   destroyCookie(undefined, CookieKeys.refreshToken)
+
+  authChannel.postMessage('signout')
 
   Router.push('/')
 }
@@ -51,6 +59,17 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const [user, setUser] = useState<User | null>(null)
   const isAuthenticated = !!user
+
+  useEffect(() => {
+    authChannel = new BroadcastChannel('auth')
+
+    authChannel.onmessage = (event) => {
+      if (event.data === 'signout') {
+        signOut()
+        return
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const token = parseCookies()[CookieKeys.token]
@@ -130,7 +149,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ signIn, isAuthenticated, user }}>
+    <AuthContext.Provider value={{ signIn, signOut, isAuthenticated, user }}>
       {children}
     </AuthContext.Provider>
   )
