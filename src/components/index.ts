@@ -18,3 +18,4 @@ export { default as Pagination } from './Pagination'
 export { default as PaginationItem } from './Pagination/PaginationItem'
 
 export { default as ActiveLink } from './ActiveLink'
+export { default as Can } from './Can'
