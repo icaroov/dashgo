@@ -1,10 +1,15 @@
-import Head from 'next/head'
-import { Flex, Button, Stack } from '@chakra-ui/react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import * as yup from 'yup'
+import { Button, Flex, Stack } from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
+import { parseCookies } from 'nookies'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import * as yup from 'yup'
 
 import { Input } from '../components'
+import { useAuth } from '../hooks/useAuth'
+import { CookieKeys } from '../services/api'
+import { withSSRGuest } from '../utils/withSSRGuest'
 
 interface InputValuesData {
   email: string
@@ -17,6 +22,8 @@ const signInSchema = yup.object().shape({
 })
 
 export default function SignIn() {
+  const { signIn } = useAuth()
+
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(signInSchema),
   })
@@ -24,8 +31,8 @@ export default function SignIn() {
   const errors = formState.errors
 
   const handleSignIn: SubmitHandler<InputValuesData> = async (values) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log(values)
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    await signIn(values)
   }
 
   return (
@@ -72,3 +79,7 @@ export default function SignIn() {
     </Flex>
   )
 }
+
+export const getServerSideProps = withSSRGuest(async (context) => {
+  return { props: {} }
+})

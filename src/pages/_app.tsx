@@ -5,23 +5,28 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 
 import { theme } from '../styles/theme'
 import { Layout } from '../components'
-import { SidebarDrawerProvider } from '../hooks/SidebarDrawer'
+
+import { SidebarDrawerProvider } from '../contexts/SidebarDrawerContext'
+import { AuthProvider } from '../contexts/authContext'
+
 import { makeServer } from '../lib/mirage'
 import { queryClient } from '../services/queryClient'
 
-if (process.env.NODE_ENV === 'development') {
-  makeServer()
-}
+// if (process.env.NODE_ENV === 'development') {
+//   makeServer()
+// }
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <SidebarDrawerProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </SidebarDrawerProvider>
+        <AuthProvider>
+          <SidebarDrawerProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </SidebarDrawerProvider>
+        </AuthProvider>
       </ChakraProvider>
 
       <ReactQueryDevtools />
